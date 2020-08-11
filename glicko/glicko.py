@@ -220,12 +220,12 @@ def find_optimal_parameters(
     start_prior_variance=100 ** 2,
     start_period_to_period_variance=10 ** 2,
     verbose=True,
-    tolerance=1e-3,
+    tolerance=1e-2,
 ):
     def fun_to_minimize(theta):
 
         # Constrain
-        prior_variance, period_to_period_variance = np.exp(theta)
+        prior_variance, period_to_period_variance = theta ** 2
 
         _, discrepancy = calculate_ratings(
             winners, losers, periods, prior_variance, period_to_period_variance
@@ -242,11 +242,11 @@ def find_optimal_parameters(
 
     opt_result = minimize(
         fun_to_minimize,
-        np.log([start_prior_variance, start_period_to_period_variance]),
+        np.sqrt([start_prior_variance, start_period_to_period_variance]),
         tol=tolerance,
     )
 
-    fit_x = np.exp(opt_result.x)
+    fit_x = opt_result.x ** 2
 
     return (
         opt_result.success,

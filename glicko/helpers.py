@@ -1,5 +1,6 @@
+import numpy as np
 import pandas as pd
-from glicko import calculate_win_prob
+from .glicko import calculate_win_prob
 from datetime import timedelta
 
 
