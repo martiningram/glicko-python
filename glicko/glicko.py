@@ -222,6 +222,26 @@ def find_optimal_parameters(
     verbose=True,
     tolerance=1e-2,
 ):
+    """Fits the parameters in Glicko.
+
+    Args:
+    winners: The array of winners for each of N contests, of shape [N,].
+    losers: The array of losers for each of N contests, of shape [N,].
+    periods: The period each match was played in. This must be an integer
+        value. Also of shape [N,].
+    start_prior_variance: The initial variance for each player in the optimisation.
+    start_period_to_period_variance: The initial variance to add between time
+        periods in the optimisation.
+    tolerance: The tolerance required for the optimisation to successfully
+        terminate.
+    verbose: Whether or not to print the progress of the optimisation.
+    
+    Returns:
+    A Tuple whose first entry is a flag indicating the optimisation's success,
+    and the second is a dictionary containing two elements; the optimal prior
+    variance and period to period variance.
+    """
+
     def fun_to_minimize(theta):
 
         # Constrain

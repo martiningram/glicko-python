@@ -5,6 +5,19 @@ from datetime import timedelta
 
 
 def predict_win_probabilities(players, opponents, periods, ratings_history):
+    """Predicts the win probabilities for players given Glicko ratings.
+
+    Args:
+    players: A numpy array of player names.
+    opponents: A numpy array of opponent names.
+    periods: The periods the contest were played in.
+    ratings_history: The list of ratings returned by running
+        glicko.calculate_ratings.
+    
+    Returns:
+    An array of win probabilities with one entry for each of the specified
+    matches.
+    """
 
     preds = list()
 
@@ -23,6 +36,18 @@ def predict_win_probabilities(players, opponents, periods, ratings_history):
 
 
 def fetch_player_history(player_name, period_length_days, start_date, rating_history):
+    """Extracts the history for a single player from the ratings history.
+
+    Args:
+    player_name: The player whose history to fetch.
+    period_length_days: The period length used to fit Glicko.
+    start_date: The date corresponding to period = 0.
+    rating_history: The ratings history returned by glicko.calculate_ratings.
+
+    Returns:
+    A pandas DataFrame whose index is the date and whose rows give the mean and
+    variance of the rating for each date.
+    """
 
     min_period = 0
     max_period = len(rating_history)
