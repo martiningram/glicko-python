@@ -23,12 +23,22 @@ def calculate_ratings(winners, losers, variance):
         n = np.array([1])
 
         new_mean_winner, _, discrepancy = calculate_new_rating(
-            mu_winner, variance_array, mu_loser, variance_array, n, [np.array([1])]
+            mu_winner[0],
+            variance_array[0],
+            mu_loser,
+            variance_array,
+            n,
+            [np.array([1])],
         )
 
         # No need for discrepancy here since we would be double-counting the outcome
         new_mean_loser, _, _ = calculate_new_rating(
-            mu_loser, variance_array, mu_winner, variance_array, n, [np.array([0])]
+            mu_loser[0],
+            variance_array[0],
+            mu_winner,
+            variance_array,
+            n,
+            [np.array([0])],
         )
 
         total_discrepancy += discrepancy
