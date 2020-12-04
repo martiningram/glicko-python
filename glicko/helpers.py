@@ -4,8 +4,8 @@ from .glicko import calculate_win_prob
 from datetime import timedelta
 
 
-def predict_win_probabilities(players, opponents, periods, ratings_history):
-    """Predicts the win probabilities for players given Glicko ratings.
+def predict_win_probabilities_and_ratings(players, opponents, periods, ratings_history):
+    """Predicts the win probabilities and ratings for players given Glicko ratings.
 
     Args:
     players: A numpy array of player names.
@@ -14,9 +14,9 @@ def predict_win_probabilities(players, opponents, periods, ratings_history):
     ratings_history: The list of ratings returned by running
         glicko.calculate_ratings.
     
-    Returns:
-    An array of win probabilities with one entry for each of the specified
-    matches.
+    Returns: 
+    A DataFrame containing win probabilities and prior ratings with one
+    entry for each of the specified matches.
     """
 
     preds = list()
@@ -27,10 +27,18 @@ def predict_win_probabilities(players, opponents, periods, ratings_history):
         opponent_mean, opponent_var = ratings_history[cur_period][cur_opponent]
 
         preds.append(
-            calculate_win_prob(player_mean, opponent_mean, player_var, opponent_var)
+            {
+                "player_mean": player_mean,
+                "player_var": player_var,
+                "opponent_mean": opponent_mean,
+                "opponent_var": opponent_var,
+                "win_prob": calculate_win_prob(
+                    player_mean, opponent_mean, player_var, opponent_var
+                ),
+            }
         )
 
-    preds = np.array(preds)
+    preds = pd.DataFrame(preds)
 
     return preds
 

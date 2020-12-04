@@ -147,6 +147,17 @@ def calculate_ratings(
         cur_winners = winners[periods == cur_period]
         cur_losers = losers[periods == cur_period]
 
+        # Calculate the discrepancy before updating:
+        for cur_winner, cur_loser in zip(cur_winners, cur_losers):
+
+            winner_mu, winner_sigma_sq = prior_ratings[cur_winner]
+            loser_mu, loser_sigma_sq = prior_ratings[cur_loser]
+            cur_sij = 1.0
+
+            total_discrepancy += calculate_discrepancy(
+                winner_mu, loser_mu, winner_sigma_sq, loser_sigma_sq, cur_sij
+            )
+
         unique_players = np.union1d(cur_winners, cur_losers)
 
         for cur_unique_player in unique_players:
@@ -193,7 +204,7 @@ def calculate_ratings(
             # We can now update the player
             player_mu, player_sigma_sq = prior_ratings[cur_unique_player]
 
-            new_mu, new_sigma_sq, discrepancy = calculate_new_rating(
+            new_mu, new_sigma_sq, _ = calculate_new_rating(
                 player_mu,
                 player_sigma_sq,
                 opponent_means,
@@ -201,8 +212,6 @@ def calculate_ratings(
                 n_j,
                 s_jk,
             )
-
-            total_discrepancy += discrepancy
 
             new_ratings[cur_unique_player] = (new_mu, new_sigma_sq)
 
