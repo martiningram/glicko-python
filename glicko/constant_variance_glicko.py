@@ -1,5 +1,7 @@
+import numpy as np
 from .glicko import calculate_new_rating, calculate_win_prob
 from collections import defaultdict
+from scipy.optimize import minimize
 
 
 def calculate_ratings(winners, losers, variance):
@@ -14,13 +16,19 @@ def calculate_ratings(winners, losers, variance):
 
         winner_rating, loser_rating = ratings[cur_winner], ratings[cur_loser]
 
+        # Create the required data structures
+        mu_winner = np.array([winner_rating])
+        mu_loser = np.array([loser_rating])
+        variance_array = np.array([variance])
+        n = np.array([1])
+
         new_mean_winner, _, discrepancy = calculate_new_rating(
-            winner_rating, variance, loser_rating, variance, 1, 1
+            mu_winner, variance_array, mu_loser, variance_array, n, [np.array([1])]
         )
 
         # No need for discrepancy here since we would be double-counting the outcome
         new_mean_loser, _, _ = calculate_new_rating(
-            loser_rating, variance, winner_rating, variance, 1, 0
+            mu_loser, variance_array, mu_winner, variance_array, n, [np.array([0])]
         )
 
         total_discrepancy += discrepancy
@@ -64,7 +72,7 @@ def find_optimal_parameters(
     def fun_to_minimize(theta):
 
         # Constrain
-        variance = theta ** 2
+        variance = theta[0] ** 2
 
         _, _, discrepancy = calculate_ratings(winners, losers, variance)
 
